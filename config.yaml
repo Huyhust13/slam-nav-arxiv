@@ -44,15 +44,18 @@ scoring:
       "failure (detection|diagnosis|recovery)", "kidnapp", "re-?locali[sz]ation",
       "vlmaps?", "language[- ]grounded map", "visual[- ]language map", "open[- ]vocabulary (map|3d|scene)",
       "lifelong (slam|map)", "long[- ]term (slam|locali|autonom|operation)",
-      "cartographer", "graph[- ]based slam|pose[- ]graph"]
-  3: ["2d lidar", "lidar", "apriltag|fiducial", "scene graph", "semantic map", "costmap",
+      "cartographer", "graph[- ]based slam|pose[- ]graph",
+      "apriltag|fiducial",
+      "(nav2|costmap|planner|controller).{0,40}(parameter|tun)|auto[- ]?tun",  # thay cho "parameter tuning|auto-tun" ở mức 3
+      "fault (detection|identification|diagnosis|attribution)",
+      "integrity|consistency (check|assessment|monitor)",
+      "map (change|update|deviation)|as[- ]built|\\bbim\\b",
+      "drift (detection|evidence)|degenera"
+      ]
+  3: ["2d lidar", "lidar",  "scene graph", "semantic map", "costmap",
       "nav2|ros ?2", "warehouse|factory|industrial|indoor", "amr|autonomous mobile robot",
-      "mobile manipulat", "elevator|multi[- ]floor", "edge (device|deploy|comput)|jetson|raspberry",
-      "parameter tuning|auto[- ]?tun", "llm|vlm|vision[- ]language|foundation model"]
-  1: ["slam", "odometry", "navigation", "planner|planning", "place recognition",
-      "loop closure", "benchmark|dataset", "real[- ]world"]
-  -3: ["autonomous driving|self-driving|vehicle", "drone|uav|aerial", "underwater|marine",
-       "medical|surgical|endoscop", "legged|quadruped|humanoid"]
+      "mobile manipulat", "elevator|multi[- ]floor", "edge (device|deploy|comput)|jetson|raspberry", "llm|vlm|vision[- ]language|foundation model"]
+  1: ["slam", "odometry", "navigation", "planner|planning", "place recognition", "benchmark|dataset", "real[- ]world"]
 
 # Có link code => cộng thêm điểm (dễ tái hiện)
 code_bonus: 1.0
@@ -61,3 +64,6 @@ code_bonus: 1.0
 digest_top_n: 40
 digest_min_score: 3
 abstract_max_chars: 700
+
+context_required: "robot|mobile|navigation|slam|locali[sz]ation|odometry|lidar|embodied|agv|amr"
+no_context_factor: 0.3 # bai khong chua tu nao o tren => diem duong x 0.3

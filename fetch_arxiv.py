@@ -114,6 +114,10 @@ def score_paper(p, rules, cfg):
             hits.append(label if w > 0 else f"-{label}")
     if p.get("code"):
         s += cfg["code_bonus"]
+    ctx = cfg.get("context_required")
+    if ctx and s > 0 and not re.search(ctx, p["title"] + " " + p["abstract"], re.I):
+        s *= cfg.get("no_context_factor", 0.3)
+        hits.append("-no-robot-context")
     return round(s, 1), hits
 
 
