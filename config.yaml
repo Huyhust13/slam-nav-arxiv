@@ -1,0 +1,63 @@
+# ===== slam-nav-arxiv: cấu hình =====
+# Mỗi tuần GitHub Actions chạy fetch_arxiv.py: lấy bài mới trên arXiv theo các topic dưới,
+# lọc trùng, chấm điểm liên quan bằng keyword (miễn phí), xuất digest gọn cho Claude đọc.
+
+lookback_days: 9          # lấy bài nộp trong N ngày gần nhất (dư 2 ngày để không sót do lệch lịch)
+max_results_per_topic: 300
+request_delay_sec: 3.5    # arXiv yêu cầu >= 3s giữa các request
+
+# Giới hạn category để tránh nhiễu (VD "navigation" trong y sinh, "SLAM" trong NLP...)
+categories: ["cs.RO", "cs.CV", "cs.AI", "cs.LG", "eess.SY"]
+
+# ---- Topic: dùng để FETCH (query arXiv) và để thống kê xu hướng ----
+# Cú pháp filter: cụm nhiều từ sẽ được tự đặt trong "...", các filter nối bằng OR
+topics:
+  "SLAM":
+    filters: ["SLAM", "LiDAR odometry", "visual odometry", "visual-inertial odometry",
+              "pose graph", "loop closure", "Cartographer"]
+  "Localization":
+    filters: ["robot localization", "relocalization", "global localization",
+              "localization failure", "place recognition", "fiducial marker", "AprilTag",
+              "Monte Carlo localization"]
+  "Navigation":
+    filters: ["robot navigation", "autonomous navigation", "mobile robot navigation",
+              "Nav2", "costmap", "local planner", "path planning mobile robot",
+              "social navigation"]
+  "Semantic & Language Maps":
+    filters: ["semantic mapping", "semantic SLAM", "scene graph", "open-vocabulary mapping",
+              "VLMaps", "language-grounded map", "3D scene graph", "spatial AI"]
+  "VLN & Embodied Nav":
+    filters: ["vision-language navigation", "object goal navigation", "ObjectNav",
+              "embodied navigation", "VLN"]
+  "Failure & Safety":
+    filters: ["failure detection robot", "failure recovery robot", "anomaly detection robot",
+              "localization integrity", "runtime monitoring robot", "introspection"]
+  "Mobile Manipulation":
+    filters: ["mobile manipulation", "mobile manipulator"]
+
+# ---- Chấm điểm liên quan (regex, không phân biệt hoa thường) ----
+# Khớp trong title được nhân title_multiplier. Điểm cao => vào digest cho Claude đọc.
+title_multiplier: 2.0
+scoring:
+  # Lõi hướng NCS: SLAM cổ điển + hiểu ngữ cảnh / ngôn ngữ hỗ trợ stack
+  5: ["semantic locali[sz]ation", "locali[sz]ation (failure|monitoring|integrity|confidence)",
+      "failure (detection|diagnosis|recovery)", "kidnapp", "re-?locali[sz]ation",
+      "vlmaps?", "language[- ]grounded map", "visual[- ]language map", "open[- ]vocabulary (map|3d|scene)",
+      "lifelong (slam|map)", "long[- ]term (slam|locali|autonom|operation)",
+      "cartographer", "graph[- ]based slam|pose[- ]graph"]
+  3: ["2d lidar", "lidar", "apriltag|fiducial", "scene graph", "semantic map", "costmap",
+      "nav2|ros ?2", "warehouse|factory|industrial|indoor", "amr|autonomous mobile robot",
+      "mobile manipulat", "elevator|multi[- ]floor", "edge (device|deploy|comput)|jetson|raspberry",
+      "parameter tuning|auto[- ]?tun", "llm|vlm|vision[- ]language|foundation model"]
+  1: ["slam", "odometry", "navigation", "planner|planning", "place recognition",
+      "loop closure", "benchmark|dataset", "real[- ]world"]
+  -3: ["autonomous driving|self-driving|vehicle", "drone|uav|aerial", "underwater|marine",
+       "medical|surgical|endoscop", "legged|quadruped|humanoid"]
+
+# Có link code => cộng thêm điểm (dễ tái hiện)
+code_bonus: 1.0
+
+# Digest cho Claude: chỉ top N bài (tiết kiệm quota), abstract cắt ngắn
+digest_top_n: 40
+digest_min_score: 3
+abstract_max_chars: 700
