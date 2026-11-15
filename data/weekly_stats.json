@@ -1,12 +1,12 @@
 {
  "2026-W46": {
-  "Failure & Safety": 5,
-  "Localization": 22,
-  "Mobile Manipulation": 11,
-  "Navigation": 14,
-  "SLAM": 19,
-  "Semantic & Language Maps": 17,
-  "VLN & Embodied Nav": 8,
-  "_total_new": 88
+  "Failure & Safety": 0,
+  "Localization": 0,
+  "Mobile Manipulation": 0,
+  "Navigation": 0,
+  "SLAM": 0,
+  "Semantic & Language Maps": 0,
+  "VLN & Embodied Nav": 0,
+  "_total_new": 0
  }
 }
