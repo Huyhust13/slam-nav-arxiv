@@ -242,15 +242,18 @@ def main():
                 p["topics"] = [name]
                 fetched[p["id"]] = p
 
-    new = []
     for pid, p in fetched.items():
         if pid in db:
             db[pid]["topics"] = sorted(set(db[pid]["topics"]) | set(p["topics"]))
             continue
-        p["score"], p["hits"] = score_paper(p, rules, cfg)
         p["first_seen"] = week
         db[pid] = p
-        new.append(p)
+
+    new = []
+    for p in db.values():
+        if p.get("first_seen") == week:
+            p["score"], p["hits"] = score_paper(p, rules, cfg)
+            new.append(p)
 
     stats_path = ROOT / "data" / "weekly_stats.json"
     stats = json.loads(stats_path.read_text()) if stats_path.exists() else {}
